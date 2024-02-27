@@ -21,12 +21,19 @@
 [x] Move single sample to REST API
 [x] Write frontend component to fetch it
 
-[] Fix overall page aesetic styling
+[x] Fix overall page aesetic styling
 [] de-noise the data https://github.com/zheng120/ECGDenoisingTool/blob/master/NLMDenoising20191120.py
 
-[] Convert 10 patients
-[] Render 10 patient charts
+[x] Convert 10 patients
+
+[] Write proper ecg component
+[] Render 10 patient ecgs
+[] Suspense loading
+[] Reduce data frequency
+
 
 
 
 [] Map diganoses to acronyms and show on ECG tiles
+
+[] Use openapi swagger to generate types for frontend

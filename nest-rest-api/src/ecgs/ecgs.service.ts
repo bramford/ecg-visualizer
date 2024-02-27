@@ -10,6 +10,7 @@ export interface Ecg {
   leads: string[];
   leadNumber: number;
   sampleRate: number;
+  sampleId: string;
   otherMachineData?: string;
   age: number;
   sex: string;
@@ -40,21 +41,23 @@ export class EcgsService {
 
   async findMany(query: GetEcgsQuery) {
     const offset = query.offset ?? 0;
-    const count = query.count ?? 10;
-    const readingsOffset = query.readingsOffset ?? 10000;
+    const count = query.count ?? 5;
+    const readingsOffset = query.readingsOffset ?? 0;
     const readingsCount = query.readingsCount ?? 500;
     if (this.ecgDataFiles.length < 1) await this.LoadEcgFiles();
     return await Promise.all(
-      this.ecgDataFiles.slice(offset, count).map(async (file) => {
+      this.ecgDataFiles.slice(offset, count - 1).map(async (file) => {
+        const sampleId = path.basename(file, '.json');
         const jsonString = await fs.readFile(file, { encoding: 'utf8' });
         const res = JSON.parse(jsonString) as Ecg;
         const readings = res.readings.slice(
           readingsOffset,
-          readingsOffset + readingsCount,
+          readingsOffset + readingsCount - 1,
         );
         return {
           ...res,
           readings,
+          sampleId,
         };
       }),
     );

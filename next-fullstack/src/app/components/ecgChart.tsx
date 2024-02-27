@@ -1,20 +1,22 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Ecg } from './ecgs';
 
-export default function EcgChart(props: { readings: number[] }) {
+export default function EcgChart(props: { ecg: Ecg }) {
 
-  const data = props.readings.slice(0,1000).map((v) => { return {v}; });
+  const readings = props.ecg.readings.map((v) => { return {v}; });
 
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={800} minHeight={400}>
-		<LineChart width={800} height={400} data={data}>
-			<CartesianGrid/>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={100}>
+		<LineChart data={readings}>
+			<CartesianGrid stroke='#d95f78' strokeDasharray="1 1"/>
 			<XAxis hide={true}/>
 			<YAxis hide={true}/>
 			<Tooltip/>
-			<Line type="linear" dataKey="v" stroke="#8884d8" strokeWidth={2} dot={false} />
+			<Line type="linear" dataKey="v" stroke="#282829" strokeWidth={1} dot={false} />
 		</LineChart>
 	</ResponsiveContainer>
   )
 }
+
