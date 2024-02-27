@@ -46,13 +46,13 @@ export class EcgsService {
     const readingsCount = query.readingsCount ?? 500;
     if (this.ecgDataFiles.length < 1) await this.LoadEcgFiles();
     return await Promise.all(
-      this.ecgDataFiles.slice(offset, count - 1).map(async (file) => {
+      this.ecgDataFiles.slice(offset, offset + count).map(async (file) => {
         const sampleId = path.basename(file, '.json');
         const jsonString = await fs.readFile(file, { encoding: 'utf8' });
         const res = JSON.parse(jsonString) as Ecg;
         const readings = res.readings.slice(
           readingsOffset,
-          readingsOffset + readingsCount - 1,
+          readingsOffset + readingsCount,
         );
         return {
           ...res,

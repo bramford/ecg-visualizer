@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Ecgs from "./components/ecgs";
+import { Suspense } from "react";
 
 function Header() {
   return (
-      <div className="flex flex-col w-full justify-between">
-        <div className="flex flex-col mb-2 justify-start bg-zinc-300 dark:bg-gray-800 shadow-md">
-          <div className="flex flex-row ml-2 justify-start">
+      <div className="flex flex-row mb-2 justify-between items-center bg-zinc-300 shadow-md">
+        <div className="flex flex-row ml-2 justify-start">
           <a
             className="pointer-events-none border-2 p-1 m-2 rounded shadow-black bg-gray-200"
             href="https://derp.tech"
@@ -21,22 +21,24 @@ function Header() {
               priority
             />
           </a>
-          <p className="text-xl dark:invert font-sans m-2 flex flex-col justify-center">
+          <p className="text-xl font-sans m-2 flex flex-col justify-center text-gray-800">
             ECG Visualizer
           </p>
-          </div>
         </div>
+        <a href="https://physio.net." className="text-xs m-2 text-gray-500 flex flex-col justify-center text-center mr-4">
+          All data courtesy of physio.net
+        </a>
       </div>
-      )
+  )
 }
 
 function Footer() {
   return (
       <div className="flex flex-col w-full justify-between">
-        <div className="flex flex-col mt-2 justify-start bg-zinc-300 dark:bg-gray-800 lg:h-16 shadow-md">
+        <div className="flex flex-col mt-2 justify-start bg-zinc-300 shadow-md">
           <div className="flex flex-row justify-between">
             <div className="flex flex-row ml-3 justify-start">
-              <p className="text-xs dark:text-gray-800 text-gray-500 flex flex-col justify-center text-center">
+              <p className="text-xs text-gray-500 flex flex-col justify-center text-center">
                 Built with
               </p>
                 <a
@@ -85,9 +87,6 @@ function Footer() {
                   />
                 </a>
             </div>
-            <a href="https://physio.net." className="text-xs m-2 text-gray-500 flex flex-col justify-center text-center">
-              All data courtesy of physio.net
-            </a>
             <div className="flex flex-row mr-2 justify-end">
               <p className="text-xs text-gray-500 my-2 flex flex-col justify-center text-center">
                 ©{new Date().getFullYear()} Bramford Horton
@@ -114,12 +113,16 @@ function Footer() {
       )
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams
+}: {
+  searchParams?: {time?: number, page?: number}
+}) {
   return (
-    <main className="flex flex-row w-full h-full justify-center bg-gray-200">
-      <div className="flex flex-col h-full w-full max-w-6xl justify-between">
+    <main className="flex flex-col h-dvh w-dvw items-center bg-gray-200">
+      <div className="flex flex-col h-full w-full max-w-4xl flex-1 justify-between">
         <Header/>
-        <Ecgs/>
+        <Ecgs time={searchParams?.time} page={searchParams?.page}/>
         <Footer/>
       </div>
     </main>
