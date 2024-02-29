@@ -41,7 +41,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
         {ecgs.map((ecg) => (
           <div key={ecg.sampleId} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center" >
-            <div className="ml-2 p-1 w-1/2 flex flex-col justify-top">
+            <div className="ml-2 p-1 w-1/3 flex flex-col justify-top">
               <p className="text-m text-gray-800">
                 {ecg.sampleId}
               </p>
@@ -53,7 +53,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
                 </p>
               </div>
             </div>
-            <div className="text-xs mt-1 text-gray-700 flex flex-col items-end">
+            <div className="text-xs mt-1 mr-0.5 text-gray-700 flex flex-col items-end">
               <p>
                 {ecg.leadNumber}l
               </p>
