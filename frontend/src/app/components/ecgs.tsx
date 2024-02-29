@@ -21,7 +21,9 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
     console.debug({offset});
     const readingsCount = opts?.readingsCount ?? 500;
     const readingsOffset = (props?.time ?? 0) * 500
-    const query = `http://localhost:3002/ecgs?count=${count}&offset=${offset}&readingsCount=${readingsCount}&readingsOffset=${readingsOffset}`;
+    const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
+    console.debug(uri)
+    const query = `${uri}/ecgs?count=${count}&offset=${offset}&readingsCount=${readingsCount}&readingsOffset=${readingsOffset}`;
     console.debug(`Fetching ${query}`);
     const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
     return ecgs;
