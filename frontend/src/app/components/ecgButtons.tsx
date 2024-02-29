@@ -19,7 +19,7 @@ export function EcgsTimeButtons() {
   function moveTimeBack() { moveTime(-1) };
   function moveTimeForward() { moveTime(1) };
   return (
-      <div className='flex flex-row items-center justify-center'>
+      <div className='flex flex-row items-center justify-center text-gray-700'>
         <button onClick={moveTimeBack} className={"p-1 px-4 shadow text-lg"  + " " + (existingTime == 0 ? "opacity-40" : "")}>
           {"-"}
         </button>
@@ -50,7 +50,7 @@ export function EcgsPageButtons() {
   function movePageBack() { movePage(-1) };
   function movePageForward() { movePage(1) };
   return (
-      <div className='flex flex-row items-center justify-center'>
+      <div className='flex flex-row items-center justify-center text-gray-700'>
         <button onClick={movePageBack} className={"p-1 px-4 shadow text-lg"  + " " + (existingPage == 0 ? "opacity-40" : "")}>
           {"<"}
         </button>

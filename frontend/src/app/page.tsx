@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Ecgs from "./components/ecgs";
-import { Suspense } from "react";
 
 function Header() {
   return (

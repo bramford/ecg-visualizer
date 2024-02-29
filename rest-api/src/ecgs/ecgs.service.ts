@@ -19,7 +19,7 @@ export interface Ecg {
 
 @Injectable()
 export class EcgsService {
-  private readonly ecgDataDirPath = 'data';
+  private readonly ecgDataDirPath = process.env.DATA_PATH ?? './data';
   private readonly ecgDataFiles: string[] = [];
 
   private async LoadEcgFiles() {

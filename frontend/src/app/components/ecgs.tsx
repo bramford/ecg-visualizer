@@ -26,6 +26,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
     const query = `${uri}/ecgs?count=${count}&offset=${offset}&readingsCount=${readingsCount}&readingsOffset=${readingsOffset}`;
     console.debug(`Fetching ${query}`);
     const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
+    console.debug(`Got response with ${ecgs.length} ecgs`);
     return ecgs;
   }
 
