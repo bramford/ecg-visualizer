@@ -18,3 +18,10 @@ See [./frontend/README.md](./frontend/README.md) for more info
 See [./rest-api/README.md](./rest-api/README.md) for more info
 
 2024 Copyright Bramford Horton
+
+## Todo List
+
+[] Map CTs and display on ECG cards
+[] Use openapi swagger to generate types for frontend
+[] Suspense loading
+[] De-noise the data https://github.com/zheng120/ECGDenoisingTool/blob/master/NLMDenoising20191120.py
