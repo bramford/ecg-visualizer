@@ -53,9 +53,9 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
                 </p>
               </div>
             </div>
-            <div className="text-xs mt-1 text-gray-700">
+            <div className="text-xs mt-1 text-gray-700 flex flex-col items-end">
               <p>
-                {ecg.leadNumber}L
+                {ecg.leadNumber}l
               </p>
               <p >
                 {ecg.sampleRate}hz

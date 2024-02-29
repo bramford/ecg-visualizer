@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateEcgDto } from './dto/create-ecg.dto';
-// import { UpdateEcgDto } from './dto/update-ecg.dto';
 import { GetEcgsQuery } from './dto/get-ecgs.dto';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';

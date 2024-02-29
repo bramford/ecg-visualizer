@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Ecgs from "./components/ecgs";
+import { Metadata } from "next";
 
 function Header() {
   return (
@@ -24,9 +25,14 @@ function Header() {
             ECG Visualizer
           </p>
         </div>
-        <a href="https://physio.net." className="text-xs m-2 text-gray-500 flex flex-col justify-center text-center mr-4">
+          <a
+            href="https://physio.net."
+            className="text-xs m-2 text-gray-500 flex flex-col justify-center text-center mr-4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
           All data courtesy of physio.net
-        </a>
+          </a>
       </div>
   )
 }
@@ -110,6 +116,11 @@ function Footer() {
         </div>
       </div>
       )
+}
+
+export const metadata: Metadata = {
+  title: 'ECG Visualizer',
+  description: 'A simple tool to view ECG data',
 }
 
 export default async function Home({
