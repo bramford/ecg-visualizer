@@ -10,23 +10,24 @@ export function EcgsTimeButtons() {
   function moveTime(n: number) {
     if (
       (existingTime == 0 && n < 0) ||
-      (existingTime == 59 && n > 0)
+      (existingTime == 55 && n > 0)
     ) return;
     const params = new URLSearchParams(searchParams);
-    params.set('time', String(existingTime + n))
+    const newTime = existingTime + n > 0 ? existingTime + n < 55 ? existingTime + n : 55 : 0
+    params.set('time', String(newTime))
     replace(`${pathname}?${params.toString()}`);
   }
-  function moveTimeBack() { moveTime(-1) };
-  function moveTimeForward() { moveTime(1) };
+  function moveTimeBack() { moveTime(-5) };
+  function moveTimeForward() { moveTime(5) };
   return (
       <div className='flex flex-row items-center justify-center text-gray-700'>
-        <button onClick={moveTimeBack} className={"p-1 px-4 shadow text-lg"  + " " + (existingTime == 0 ? "opacity-40" : "")}>
+        <button onClick={moveTimeBack} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingTime == 0 ? "opacity-40" : "")}>
           {"-"}
         </button>
-        <p className='py-1 px-4 shadow h-9 text-md flex items-center'>
-          🕡 {existingTime + 1}s
+        <p className='py-2.5 px-4 shadow text-[2vw] md:text-base flex items-center'>
+          🕡 {existingTime}-{existingTime + 5}s
         </p>
-        <button onClick={moveTimeForward} className={"p-1 px-4 shadow text-lg"  + " " + (existingTime == 59 ? "opacity-40" : "")}>
+        <button onClick={moveTimeForward} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingTime == 55 ? "opacity-40" : "")}>
           {"+"}
         </button>
       </div>
@@ -51,13 +52,13 @@ export function EcgsPageButtons() {
   function movePageForward() { movePage(1) };
   return (
       <div className='flex flex-row items-center justify-center text-gray-700'>
-        <button onClick={movePageBack} className={"p-1 px-4 shadow text-lg"  + " " + (existingPage == 0 ? "opacity-40" : "")}>
+        <button onClick={movePageBack} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingPage == 0 ? "opacity-40" : "")}>
           {"<"}
         </button>
-        <p className='py-1 px-4 shadow h-9 text-md flex items-center'>
-          📋 {existingPage + 1}/20
+        <p className='py-2.5 px-4 shadow text-[2vw] md:text-base flex items-center'>
+          📋 {existingPage * 5}-{(existingPage + 1) * 5}/{20 * 5}
         </p>
-        <button onClick={movePageForward} className={"p-1 px-4 shadow text-lg" + " " + (existingPage == 19 ? "opacity-40" : "")}>
+        <button onClick={movePageForward} className={"py-2.5 px-4 shadow text-[2vw] md:text-base" + " " + (existingPage == 19 ? "opacity-40" : "")}>
           {">"}
         </button>
       </div>

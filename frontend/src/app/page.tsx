@@ -5,7 +5,7 @@ import { Metadata } from "next";
 function Header() {
   return (
       <div className="flex flex-row mb-2 justify-between items-center bg-zinc-300 shadow-md">
-        <div className="flex flex-row ml-2 justify-start">
+        <div className="flex flex-row ml-2 justify-center items-center">
           <a
             className="pointer-events-none border-2 p-1 m-2 rounded shadow-black bg-gray-200"
             href="https://derp.tech"
@@ -25,14 +25,24 @@ function Header() {
             ECG Visualizer
           </p>
         </div>
+        <div className="flex flex-col justify-center text-right my-2 mr-4">
           <a
-            href="https://physio.net."
-            className="text-xs m-2 text-gray-500 flex flex-col justify-center text-center mr-4"
+            href="https://www.physionet.org/content/ecg-arrhythmia/1.0.0/"
+            className="text-sm text-gray-800"
             target="_blank"
             rel="noopener noreferrer"
           >
-          All data courtesy of physio.net
+          Data Source
           </a>
+          <a
+            href="https://www.physionet.org/content/ecg-arrhythmia/1.0.0/"
+            className="text-xs text-gray-500 italic"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+          A large scale 12-lead electrocardiogram database for arrhythmia study
+          </a>
+        </div>
       </div>
   )
 }
@@ -130,7 +140,7 @@ export default async function Home({
 }) {
   return (
     <main className="flex flex-col h-dvh w-dvw items-center bg-gray-200">
-      <div className="flex flex-col h-full w-full max-w-4xl flex-1 justify-between">
+      <div className="flex flex-col h-full w-full flex-1 justify-between">
         <Header/>
         <Ecgs time={searchParams?.time} page={searchParams?.page}/>
         <Footer/>

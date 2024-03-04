@@ -15,14 +15,13 @@ export interface Ecg {
 
 export default async function Ecgs(props?: {time?: number, page?: number}) {
 
-  async function getEcgs(opts?: {count?: number, readingsCount?: number}) {
-    const count = opts?.count ?? 5;
-    const offset = (props?.page ?? 0) * count
-    console.debug({offset});
-    const readingsCount = opts?.readingsCount ?? 500;
-    const readingsOffset = (props?.time ?? 0) * 500
+  const count = 5;
+  const offset = (props?.page ?? 0) * count
+  const readingsCount = 2500;
+  const readingsOffset = (props?.time ?? 0) * 500
+
+  async function getEcgs() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
-    console.debug(uri)
     const query = `${uri}/ecgs?count=${count}&offset=${offset}&readingsCount=${readingsCount}&readingsOffset=${readingsOffset}`;
     console.debug(`Fetching ${query}`);
     const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
@@ -41,11 +40,11 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
         {ecgs.map((ecg) => (
           <div key={ecg.sampleId} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center" >
-            <div className="ml-2 p-1 w-1/3 flex flex-col justify-top">
-              <p className="text-m text-gray-800">
+            <div className="ml-2 mr-2 p-1 flex flex-col justify-top">
+              <p className="text-m text-red-600 opacity-80">
                 {ecg.sampleId}
               </p>
-              <div className="w-1/2 flex flex-col justify-top text-sm text-gray-700">
+              <div className="flex flex-col justify-top text-sm text-gray-700">
                 <p>
                   {ecg.age} {ecg.sex}
                 </p>
@@ -53,7 +52,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
                 </p>
               </div>
             </div>
-            <div className="text-xs mt-1 mr-0.5 text-gray-700 flex flex-col items-end">
+            <div className="text-xs ml-2 mt-1 mr-0.5 text-gray-700 flex flex-col items-end">
               <p>
                 {ecg.leadNumber}l
               </p>
@@ -61,7 +60,9 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
                 {ecg.sampleRate}hz
               </p>
             </div>
-            <EcgChart ecg={ecg}/>
+            <div className="overflow-x-scroll">
+              <EcgChart ecg={ecg}/>
+            </div>
           </div>
         ))}
         </div>

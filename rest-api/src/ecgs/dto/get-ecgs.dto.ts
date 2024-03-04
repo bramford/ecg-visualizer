@@ -15,7 +15,7 @@ export class GetEcgsQuery {
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => Number(value))
-  @Max(1000)
+  @Max(2500)
   @Min(1)
   readingsCount?: number;
   @IsOptional()
