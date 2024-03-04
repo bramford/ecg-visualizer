@@ -17,7 +17,7 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
         if (active && payload && payload.length > 0) {
           return (
             <>
-              <div className='bg-gray-100 px-2 py-1 opacity-80 text-sm'>
+              <div className='bg-gray-100 px-2 py-1 opacity-80 text-sm text-gray-900'>
                 <p>{payload[0].value}</p>
                 <p className='italic'>{label}s</p>
               </div>

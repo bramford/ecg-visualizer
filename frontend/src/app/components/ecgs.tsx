@@ -32,8 +32,9 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
   const ecgs = await getEcgs()
     return (
       <>
-      <div className="flex items-center justify-evenly my-1">
+      <div className="flex items-center justify-center my-1">
         <EcgsPageButtons/>
+        <div className="w-2"/>
         <EcgsTimeButtons/>
       </div>
       <div className="flex flex-col mx-2 flex-1 overflow-auto">
