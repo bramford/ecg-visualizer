@@ -21,13 +21,13 @@ export function EcgsTimeButtons() {
   function moveTimeForward() { moveTime(5) };
   return (
       <div className='flex flex-row items-center justify-center text-gray-700'>
-        <button onClick={moveTimeBack} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingTime == 0 ? "opacity-40" : "")}>
+        <button onClick={moveTimeBack} className={"py-2.5 px-4 shadow text-[3vw] sm:text-base"  + " " + (existingTime == 0 ? "opacity-40" : "")}>
           {"-"}
         </button>
-        <p className='py-2.5 px-4 shadow text-[2vw] md:text-base flex items-center'>
+        <p className='py-2.5 px-4 shadow text-[3vw] sm:text-base flex items-center'>
           🕡 {existingTime}-{existingTime + 5}s
         </p>
-        <button onClick={moveTimeForward} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingTime == 55 ? "opacity-40" : "")}>
+        <button onClick={moveTimeForward} className={"py-2.5 px-4 shadow text-[3vw] sm:text-base"  + " " + (existingTime == 55 ? "opacity-40" : "")}>
           {"+"}
         </button>
       </div>
@@ -52,13 +52,13 @@ export function EcgsPageButtons() {
   function movePageForward() { movePage(1) };
   return (
       <div className='flex flex-row items-center justify-center text-gray-700'>
-        <button onClick={movePageBack} className={"py-2.5 px-4 shadow text-[2vw] md:text-base"  + " " + (existingPage == 0 ? "opacity-40" : "")}>
+        <button onClick={movePageBack} className={"py-2.5 px-4 shadow text-[3vw] sm:text-base"  + " " + (existingPage == 0 ? "opacity-40" : "")}>
           {"<"}
         </button>
-        <p className='py-2.5 px-4 shadow text-[2vw] md:text-base flex items-center'>
-          📋 {existingPage * 5}-{(existingPage + 1) * 5}/{20 * 5}
+        <p className='py-2.5 px-4 shadow text-[3vw] sm:text-base flex items-center'>
+          📋 {existingPage * 5}-{(existingPage + 1) * 5}
         </p>
-        <button onClick={movePageForward} className={"py-2.5 px-4 shadow text-[2vw] md:text-base" + " " + (existingPage == 19 ? "opacity-40" : "")}>
+        <button onClick={movePageForward} className={"py-2.5 px-4 shadow text-[3vw] sm:text-base" + " " + (existingPage == 19 ? "opacity-40" : "")}>
           {">"}
         </button>
       </div>

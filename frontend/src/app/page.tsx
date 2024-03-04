@@ -7,7 +7,7 @@ function Header() {
       <div className="flex flex-row mb-2 justify-between items-center bg-zinc-300 shadow-md">
         <div className="flex flex-row ml-2 justify-center items-center">
           <a
-            className="pointer-events-none border-2 p-1 m-2 rounded shadow-black bg-gray-200"
+            className="pointer-events-none border-2 p-1 m-2 rounded shadow bg-gray-200"
             href="https://derp.tech"
             target="_blank"
             rel="noopener noreferrer"

@@ -61,7 +61,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
               </p>
             </div>
             <div className="overflow-x-scroll">
-              <EcgChart ecg={ecg}/>
+              <EcgChart ecg={ecg} startMs={readingsOffset} intervalMs={1000 / ecg.sampleRate}/>
             </div>
           </div>
         ))}
