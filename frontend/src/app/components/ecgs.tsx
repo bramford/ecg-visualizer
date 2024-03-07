@@ -1,9 +1,23 @@
 import { default as EcgChart } from "./ecgChart";
-import { EcgsPageButtons, EcgsTimeButtons } from "./ecgButtons";
+import { EcgsPageButtons } from "./ecgButtons";
 
+export interface EcgLead {
+  unknown1: string;
+  mV: number;
+  unknown3: string;
+  unknown4: string;
+  unknown5: string;
+  unknown6: string;
+  unknown7: string;
+  id: string;
+}
 export interface Ecg {
-  readings: number[];
-  leads: string[];
+  readings: {
+    [leadId: string]: number[];
+  };
+  leads: {
+    [leadId: string]: EcgLead;
+  };
   leadNumber: number;
   sampleRate: number;
   sampleId: string;
@@ -13,16 +27,26 @@ export interface Ecg {
   diagnoses: string[];
 }
 
-export default async function Ecgs(props?: {time?: number, page?: number}) {
+export interface EcgMetadata {
+  readingsCountPerLead: number;
+  leadIds: string[];
+  leadNumber: number;
+  sampleRate: number;
+  sampleId: string;
+  otherMachineData?: string;
+  age: number;
+  sex: string;
+  diagnoses: string[];
+}
 
-  const count = 5;
+export default async function Ecgs(props?: {page?: number}) {
+
+  const count = 10;
   const offset = (props?.page ?? 0) * count
-  const readingsCount = 2500;
-  const readingsOffset = (props?.time ?? 0) * 500
 
   async function getEcgs() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
-    const query = `${uri}/ecgs?count=${count}&offset=${offset}&readingsCount=${readingsCount}&readingsOffset=${readingsOffset}`;
+    const query = `${uri}/ecgs?count=${count}&offset=${offset}`;
     console.debug(`Fetching ${query}`);
     const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
     console.debug(`Got response with ${ecgs.length} ecgs`);
@@ -33,9 +57,7 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
     return (
       <>
       <div className="flex items-center justify-center my-1">
-        <EcgsPageButtons/>
-        <div className="w-2"/>
-        <EcgsTimeButtons/>
+        <EcgsPageButtons ecgsPerPage={count}/>
       </div>
       <div className="flex flex-col mx-2 flex-1 overflow-auto">
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
@@ -61,9 +83,6 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
                 {ecg.sampleRate}hz
               </p>
             </div>
-            <div className="overflow-x-scroll">
-              <EcgChart ecg={ecg} startMs={readingsOffset} intervalMs={1000 / ecg.sampleRate}/>
-            </div>
           </div>
         ))}
         </div>
@@ -72,3 +91,8 @@ export default async function Ecgs(props?: {time?: number, page?: number}) {
     )
 }
 
+            {/*
+            <div className="overflow-x-scroll">
+              <EcgChart ecg={ecg} startMs={readingsOffset} intervalMs={1000 / ecg.sampleRate}/>
+            </div>
+            */}

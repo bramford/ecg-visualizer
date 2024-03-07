@@ -1,11 +1,10 @@
 'use client'
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Ecg } from './ecgs';
 
-export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs: number }) {
+export default function EcgChart(props: { readings: number[], startMs: number, intervalMs: number }) {
 
-  const readings = props.ecg.readings.map((value, i) => { return {timeMs: (props.startMs + (props.intervalMs * i)) / 1000, value}});
+  const readings = props.readings.map((value, i) => { return {timeMs: (props.startMs + (props.intervalMs * i)) / 1000, value}});
 
   return (
 	 <ResponsiveContainer width="100%" height="100%" minWidth={readings.length} minHeight={120}>

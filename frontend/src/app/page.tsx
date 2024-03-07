@@ -22,7 +22,7 @@ function Header() {
             />
           </a>
           <p className="text-xl font-sans m-2 flex flex-col justify-center text-gray-800">
-            ECG Visualizer
+            ECG Arrhythmia Visualizer
           </p>
         </div>
         <div className="flex flex-col justify-center text-right my-2 mr-4">
@@ -142,7 +142,7 @@ export default async function Home({
     <main className="flex flex-col h-dvh w-dvw items-center bg-gray-200">
       <div className="flex flex-col h-full w-full flex-1 justify-between">
         <Header/>
-        <Ecgs time={searchParams?.time} page={searchParams?.page}/>
+        <Ecgs page={searchParams?.page}/>
         <Footer/>
       </div>
     </main>
