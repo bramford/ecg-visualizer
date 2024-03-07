@@ -7,30 +7,13 @@ import os
 
 import numpy as np
 
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super(NpEncoder, self).default(obj)
-
-
 def convert_sample_to_json(samplePath: str):
     sampleId = os.path.splitext(os.path.basename(samplePath))[0]
     parentDir = os.path.dirname(samplePath)
-    mat = scipy.io.loadmat(samplePath)
-    readings = []
-
-    for value in mat["val"]:
-        for v in value:
-            readings.append(v)
 
     jsondata = dict()
-    jsondata["readings"] = readings
-    jsondata["leads"] = []
+    jsondata["readings"] = dict()
+    jsondata["leads"] = dict()
 
     with open(os.path.join(parentDir,sampleId) + ".hea", "r", encoding="UTF-8") as file:
         lines = [line.rstrip() for line in file]
@@ -38,15 +21,26 @@ def convert_sample_to_json(samplePath: str):
             if i == 0:
                 machinematch = re.match(r'^(JS\d+)\s+(\d+)\s+(\d+)\s+(.*)', line)
                 if machinematch:
-                    jsondata["leadNumber"] = machinematch.group(2)
+                    jsondata["leadNumber"] = int(machinematch.group(2))
                     jsondata["sampleRate"] = machinematch.group(3)
                     jsondata["otherMachineData"] = machinematch.group(4)
                     continue
 
-            if i > 0 and i < 13:
-                leadmatch = re.match(r'^(JS\d+\.mat)\s+(.*)', line)
+            if i > 0 and i <= jsondata["leadNumber"]:
+                leadmatch = re.match(r'^(JS\d+\.mat)\s+(\d+\+\d+)\s+(\d+\/mV)\s+(\d+)\s+(\d+)\s+(\-*\d+)\s+(\-*\d+)\s+(\-*\d+)\s+(\w+|\W+|\d+)$', line)
                 if leadmatch:
-                    jsondata["leads"].append(leadmatch.group(2))
+                    lead = dict()
+                    lead["unknown1"] = leadmatch.group(2)
+                    lead["mV"] = leadmatch.group(3)
+                    lead["unknown3"] = leadmatch.group(4)
+                    lead["unknown4"] = leadmatch.group(5)
+                    lead["unknown5"] = leadmatch.group(5)
+                    lead["unknown5"] = leadmatch.group(6)
+                    lead["unknown6"] = leadmatch.group(7)
+                    lead["unknown7"] = leadmatch.group(8)
+                    leadId = leadmatch.group(9)
+                    lead["id"] = leadId
+                    jsondata["leads"][leadId] = lead;
                     continue
 
             agematch = re.match(r'^\#Age\:\s+(\d+)', line)
@@ -64,8 +58,17 @@ def convert_sample_to_json(samplePath: str):
                 jsondata["diagnoses"] = dxmatch.group(1).split(",")
                 continue
 
+    mat = scipy.io.loadmat(samplePath)
+
+    index = 0
+    for value in mat["val"]:
+        readings = value.tolist();
+        leadId = list(jsondata["leads"].keys())[index]
+        jsondata["readings"][leadId] = readings
+        index+=1
+
     with open("./" + sampleId + ".json", "w") as f:
-        json.dump(jsondata, f, cls=NpEncoder)
+        json.dump(jsondata, f)
 
 for root, dirs, files in os.walk("./physionet.org/files/ecg-arrhythmia/1.0.0/WFDBRecords/01/010/"):
     for file in files:
