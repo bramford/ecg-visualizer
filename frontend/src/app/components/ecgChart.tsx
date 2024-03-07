@@ -35,7 +35,7 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
   });
 
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length} minHeight={50 * Object.keys(props.ecg.readings).length}>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={50 * Object.keys(props.ecg.readings).length}>
 		<LineChart data={readingsFixed}>
 			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1"/>
 			<XAxis dataKey="timeMs" hide={true}/>

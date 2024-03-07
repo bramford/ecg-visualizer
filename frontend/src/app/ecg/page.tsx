@@ -1,4 +1,5 @@
 import { default as EcgChart } from "../components/ecgChart";
+import { Footer, Header } from "../components/shared";
 import { Ecg } from "../lib/types";
 
 export default async function Ecg({
@@ -21,6 +22,9 @@ export default async function Ecg({
   const ecg = await getEcg()
     return (
       <>
+      <div className="flex flex-col h-dvh w-dvw items-center bg-gray-200">
+      <div className="flex flex-col h-full w-full flex-1 justify-between">
+      <Header/>
       <div className="flex flex-col mx-2 flex-1 overflow-auto">
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
           <div key={ecg.sampleId} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center">
@@ -49,6 +53,9 @@ export default async function Ecg({
             </div>
           </div>
         </div>
+      </div>
+      <Footer/>
+      </div>
       </div>
       </>
     )
