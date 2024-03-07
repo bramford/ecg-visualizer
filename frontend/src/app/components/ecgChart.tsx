@@ -1,14 +1,18 @@
 'use client'
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Ecg } from '../lib/types';
 
-export default function EcgChart(props: { readings: number[], startMs: number, intervalMs: number }) {
+export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs: number }) {
 
-  const readings = props.readings.map((value, i) => { return {timeMs: (props.startMs + (props.intervalMs * i)) / 1000, value}});
+  const readingsFixed = Object.entries(props.ecg.readings).flatMap(([leadId, readings]) => {
+    const readingsFixed =  readings.map((value, i) => { return {leadId, timeMs: (props.startMs + (props.intervalMs * i)) / 1000, value}});
+    return readingsFixed;
+  });
 
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={readings.length} minHeight={120}>
-		<LineChart data={readings}>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length} minHeight={50 * Object.keys(props.ecg.readings).length}>
+		<LineChart data={readingsFixed}>
 			<CartesianGrid stroke='#d95f78' strokeDasharray="1 1"/>
 			<XAxis dataKey="timeMs" hide={true}/>
 			<YAxis hide={true}/>

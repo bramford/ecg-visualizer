@@ -1,31 +1,29 @@
-import { EcgsPageButtons } from "./ecgButtons";
-import Link from "next/link";
+import { default as EcgChart } from "../components/ecgChart";
 import { Ecg } from "../lib/types";
 
-export default async function Ecgs(props?: {page?: number}) {
+export default async function Ecg({
+  searchParams
+}: {
+  searchParams?: {id?: string}
+}) {
 
-  const count = 10;
-  const offset = (props?.page ?? 0) * count
-
-  async function getEcgs() {
+  async function getEcg() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
-    const query = `${uri}/ecgs?count=${count}&offset=${offset}`;
+    const query = `${uri}/ecgs/${searchParams?.id}`;
     console.debug(`Fetching ${query}`);
-    const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
-    console.debug(`Got response with ${ecgs.length} ecgs`);
-    return ecgs;
+    const response = await fetch(query, { cache: 'no-cache', mode: "no-cors" });
+    console.debug(response.status);
+    const body = await response.text();
+    console.debug(`Got body: ${body}`);
+    return JSON.parse(body) as Ecg;
   }
 
-  const ecgs = await getEcgs()
+  const ecg = await getEcg()
     return (
       <>
-      <div className="flex items-center justify-center my-1">
-        <EcgsPageButtons ecgsPerPage={count}/>
-      </div>
       <div className="flex flex-col mx-2 flex-1 overflow-auto">
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
-        {ecgs.map((ecg) => (
-          <Link key={ecg.sampleId} href={`/ecg?id=${ecg.sampleId}`} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center">
+          <div key={ecg.sampleId} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center">
             <div className="ml-2 mr-2 p-1 flex flex-col justify-top">
               <p className="text-m text-red-600 opacity-80">
                 {ecg.sampleId}
@@ -46,10 +44,13 @@ export default async function Ecgs(props?: {page?: number}) {
                 {ecg.sampleRate}hz
               </p>
             </div>
-          </Link>
-        ))}
+            <div className="overflow-x-scroll">
+              <EcgChart ecg={ecg} startMs={0} intervalMs={1000 / ecg.sampleRate}/>
+            </div>
+          </div>
         </div>
       </div>
       </>
     )
 }
+

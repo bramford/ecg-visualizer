@@ -65,18 +65,18 @@ export class EcgsService {
 
   async findOne(id: string) {
     if (this.ecgDataFiles.length < 1) await this.LoadEcgFiles();
-    const ecgFile = await this.ecgDataFiles.reduce<Promise<Ecg | undefined>>(
-      async (existing, file) => {
-        if (existing !== undefined) return existing;
+    const foundFile = this.ecgDataFiles.reduce<string | undefined>(
+      (found, file) => {
+        if (found != undefined) return found;
         const sampleId = path.basename(file, '.json');
-        if (sampleId != id) return undefined;
-        const jsonString = await fs.readFile(file, { encoding: 'utf8' });
-        const res = JSON.parse(jsonString) as Ecg;
-        return res;
+        if (sampleId == id) return file;
       },
       undefined,
     );
-    return ecgFile;
+    if (foundFile == undefined) return undefined;
+    const jsonString = await fs.readFile(foundFile, { encoding: 'utf8' });
+    const res = JSON.parse(jsonString) as Ecg;
+    return res;
   }
 
   async findMany(query: GetEcgsQuery) {
@@ -89,7 +89,7 @@ export class EcgsService {
         const jsonString = await fs.readFile(file, { encoding: 'utf8' });
         const ecg = JSON.parse(jsonString) as Ecg;
         const metadata: EcgMetadata = {
-          readingsCountPerLead: ecg.readings[0].length,
+          readingsCountPerLead: Object.values(ecg.readings)[0].length,
           leadIds: Object.keys(ecg.leads),
           sampleId,
           age: ecg.age,

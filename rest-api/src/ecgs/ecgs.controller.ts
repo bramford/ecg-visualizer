@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { EcgsService } from './ecgs.service';
 import { GetEcgsQuery } from './dto/get-ecgs.dto';
 
@@ -22,6 +29,8 @@ export class EcgsController {
 
   @Get(':id')
   async getOne(@Param('id') id: string) {
-    return await this.ecgsService.findOne(id);
+    const result = await this.ecgsService.findOne(id);
+    if (result == undefined) throw new NotFoundException();
+    return result;
   }
 }
