@@ -35,12 +35,30 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
   });
 
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={50 * Object.keys(props.ecg.readings).length}>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={600}>
 		<LineChart data={readingsFixed}>
 			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1"/>
 			<XAxis dataKey="timeMs" hide={true}/>
 			<YAxis hide={true}/>
-			<Tooltip/>
+			<Tooltip content={({ active, payload, label}) => {
+        if (active && payload && payload.length > 0) {
+          return (
+              <div className='bg-gray-100 px-2 py-1 opacity-80 text-sm text-gray-900'>
+                <p>{label}</p>
+                {payload.map((p) => {
+                  return (
+                    <>
+                    <div className={'flex items-center justify-between' + 'text-[' + p.color + ']'}>
+                    <p className={'mr-1' + 'text-[#' + p.color + ']'}>{p.dataKey}: </p>
+                    <p>{p.value}</p>
+                    </div>
+                    </>
+                  )
+                })}
+              </div>
+            )
+        }
+      }}/>
       {Object.keys(readingsFixed[0]).map((key) => {
         const leadColor = resolveLeadColor(key);
         return (

@@ -1,0 +1,7 @@
+numpy
+scipy
+matplotlib
+py-ecg-detectors
+scikit-learn
+wfdb
+pandas

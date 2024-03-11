@@ -1,16 +1,26 @@
-#!/run/current-system/sw/bin/python
+#!.venv/bin/python
+from os.path import isfile
 import scipy.io
 import json
 import re
 import os
 import sys
+import copy
 #mat = scipy.io.loadmat('./MLII/1 NSR/100m (0).mat')
 
 import numpy as np
 import math
 
 from scipy import signal
+from ecgdetectors import Detectors
 import matplotlib.pyplot as plt
+import argparse
+from stat import S_ISDIR,S_ISREG
+
+import wavelet_transform
+import savitzky_golay_filter
+import denoise
+import denoise_gpt
 
 def NLM_1dDarbon(signal,Nvar,P,PatchHW):
     if isinstance(P,int): # scalar has been entered; expand into patch sample index vector
@@ -75,6 +85,33 @@ def NLM_1dDarbon(signal,Nvar,P,PatchHW):
 
     return denoisedSig#,debug
 
+#def find_mean_qrs(qrs: dict[str, list[int]]):
+#    _qrs = copy.deepcopy(qrs)
+#    algCount = len(qrs)
+#    for algI, (algKey, algQs) in enumerate(qrs.items()):
+#        for i, q in enumerate(algQs):
+#algCount = len(qrs)
+#    for algI, (algKey, algQs) in enumerate(qrs.items()):
+#        for i, q in enumerate(algQs):
+
+def qrs_starts_and_ends(qrs: list[int], max: int):
+    starts_and_ends: list[tuple[int, int]] = []
+    for i, v in enumerate(qrs):
+        start = 0
+        end = 0
+        if i == 0:
+            start = v - (v / 3)
+            if start <= 0: start = 0
+        else:
+            start = v - ((v - qrs[i-1]) / 3)
+
+        if i+1 < len(qrs):
+            end = v + ((qrs[i+1] - v) / 3)
+        else:
+            end = v + ((max - v) / 3)
+        starts_and_ends.append((int(start), int(end)))
+    return starts_and_ends
+
 def convert_sample_to_json(samplePath: str):
     sampleId = os.path.splitext(os.path.basename(samplePath))[0]
     parentDir = os.path.dirname(samplePath)
@@ -82,6 +119,8 @@ def convert_sample_to_json(samplePath: str):
     jsondata = dict()
     jsondata["readings"] = dict()
     jsondata["leads"] = dict()
+    jsondata["qrs"] = dict()
+    jsondata["qrsStartsAndEnds"] = dict()
 
     with open(os.path.join(parentDir,sampleId) + ".hea", "r", encoding="UTF-8") as file:
         lines = [line.rstrip() for line in file]
@@ -130,18 +169,56 @@ def convert_sample_to_json(samplePath: str):
 
     index = 0
     for value in mat["val"]:
+
         readings = value.tolist();
+        sampleRate = int(jsondata["sampleRate"])
+
+        #readings_denoised = denoise.wavelet_denoising(readings).tolist()
+        readings_denoised = denoise_gpt.denoise_ecg(readings).tolist()
+        detectors = Detectors(sampleRate)
+        print("Running QRS detectors")
+        #hamilton = detectors.hamilton_detector(readings_denoised);
+        #print("Got " + str(len(hamilton)) + " hamilton qrs's")
+        #print(hamilton)
+        #christov = detectors.christov_detector(readings_denoised);
+        #print("Got " + str(len(christov)) + " christov qrs's")
+        #print(christov)
+        two_average_np = detectors.two_average_detector(readings_denoised);
+        two_average = list(map(lambda n: int(n), two_average_np))
+        starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1))
+        print("Got " + str(len(two_average)) + " two_average qrs's")
+        print(two_average)
+        print("Got " + str(len(starts_and_ends)) + "starts and ends")
+        print(starts_and_ends)
         leadId = list(jsondata["leads"].keys())[index]
-        jsondata["readings"][leadId] = readings
+        jsondata["readings"][leadId] = readings_denoised
+        jsondata["qrs"][leadId] = two_average
+        jsondata["qrsStartsAndEnds"][leadId] = starts_and_ends
         index+=1
 
     with open("./" + sampleId + ".json", "w") as f:
         json.dump(jsondata, f)
 
-for root, dirs, files in os.walk("./physionet.org/files/ecg-arrhythmia/1.0.0/WFDBRecords/01/010/"):
-    for file in files:
-        extension = os.path.splitext(file)[1]
-        if extension and extension == ".mat":
-            filePath = os.path.join(root, file)
-            print("Found mat file to convert: " + filePath)
-            convert_sample_to_json(os.path.join(root, file))
+print("Starting")
+parser = argparse.ArgumentParser(
+                    prog='ECG transformer',
+                    description='Transform ECGs for visualization',
+                    epilog='')
+parser.add_argument('filename')
+args = parser.parse_args()
+
+def process_file(root, file: str):
+    extension = os.path.splitext(file)[1]
+    if extension and extension == ".mat":
+        filePath = os.path.join(root, file)
+        print("Found mat file to convert: " + filePath)
+        convert_sample_to_json(os.path.join(root, file))
+
+stat = os.lstat(args.filename)
+if S_ISREG(stat.st_mode):
+    print(args.filename + "Is a regular file")
+    process_file("/", args.filename)
+elif S_ISDIR(stat.st_mode):
+    for root, dirs, files in os.walk(args.filename):
+        for file in files:
+            process_file(root, file)

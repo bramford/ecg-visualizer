@@ -20,6 +20,12 @@ export interface Ecg {
   leads: {
     [leadId: string]: EcgLead;
   };
+  qrs: {
+    [leadId: string]: number[];
+  };
+  qrsStartsAndEnds: {
+    [leadId: string]: [number, number][];
+  };
   leadNumber: number;
   sampleRate: number;
   sampleId: string;
