@@ -1,5 +1,7 @@
 # ECG Visualizer
 
+Hosted at [ecg.derp.tech](https://ecg.derp.tech)
+
 This is an example fullstack web application that provides an API & frontend to store, query & view electrocardiograms
 
 ## Data
@@ -21,7 +23,7 @@ See [./rest-api/README.md](./rest-api/README.md) for more info
 
 ## Todo List
 
-[] Map CTs and display on ECG cards
-[] Use openapi swagger to generate types for frontend
-[] Suspense loading
-[] De-noise the data https://github.com/zheng120/ECGDenoisingTool/blob/master/NLMDenoising20191120.py
+* [] Map CTs and display on ECG cards
+* [] Use openapi swagger to generate types for frontend
+* [] Suspense loading
+* [] De-noise the data https://github.com/zheng120/ECGDenoisingTool/blob/master/NLMDenoising20191120.py

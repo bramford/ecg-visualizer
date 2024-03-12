@@ -12,14 +12,4 @@ export class GetEcgsQuery {
   @IsNumber()
   @Transform(({ value }) => Number(value))
   offset?: number;
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => Number(value))
-  @Max(2500)
-  @Min(1)
-  readingsCount?: number;
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => Number(value))
-  readingsOffset?: number;
 }
