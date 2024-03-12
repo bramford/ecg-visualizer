@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Footer, Header } from "./components/shared";
 
 export const metadata: Metadata = {
-  title: 'ECG Visualizer',
-  description: 'A simple tool to view ECG data',
+  title: 'ECG Arrhythmia Visualizer',
+  description: 'A simple tool to view ECG arrhythmia data',
 }
 
 export default async function Home({

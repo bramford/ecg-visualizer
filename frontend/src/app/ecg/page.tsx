@@ -1,6 +1,12 @@
+import { Metadata } from "next";
 import { default as EcgChart } from "../components/ecgChart";
 import { Footer, Header } from "../components/shared";
 import { Ecg } from "../lib/types";
+
+export const metadata: Metadata = {
+  title: 'ECG Arrhythmia Visualizer',
+  description: 'A simple tool to view ECG arrhythmia data',
+}
 
 export default async function Ecg({
   searchParams
