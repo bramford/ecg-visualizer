@@ -1,10 +1,12 @@
 #!.venv/bin/python
 from os.path import isfile
+from numpy.lib import append
 import scipy.io
 import json
 import re
 import os
 import sys
+import statistics
 import copy
 #mat = scipy.io.loadmat('./MLII/1 NSR/100m (0).mat')
 
@@ -120,6 +122,7 @@ def convert_sample_to_json(samplePath: str):
     jsondata["readings"] = dict()
     jsondata["leads"] = dict()
     jsondata["qrs"] = dict()
+    jsondata_qrs : dict[str, list[int]] = dict()
     jsondata["qrsStartsAndEnds"] = dict()
 
     with open(os.path.join(parentDir,sampleId) + ".hea", "r", encoding="UTF-8") as file:
@@ -173,10 +176,10 @@ def convert_sample_to_json(samplePath: str):
         readings = value.tolist();
         sampleRate = int(jsondata["sampleRate"])
 
-        #readings_denoised = denoise.wavelet_denoising(readings).tolist()
-        readings_denoised = denoise_gpt.denoise_ecg(readings).tolist()
+        readings_denoised = denoise.wavelet_denoising(readings).tolist()
+        #readings_denoised = denoise_gpt.denoise_ecg(readings).tolist()
         detectors = Detectors(sampleRate)
-        print("Running QRS detectors")
+        #print("Running QRS detectors")
         #hamilton = detectors.hamilton_detector(readings_denoised);
         #print("Got " + str(len(hamilton)) + " hamilton qrs's")
         #print(hamilton)
@@ -186,20 +189,39 @@ def convert_sample_to_json(samplePath: str):
         two_average_np = detectors.two_average_detector(readings_denoised);
         two_average = list(map(lambda n: int(n), two_average_np))
         starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1))
-        print("Got " + str(len(two_average)) + " two_average qrs's")
-        print(two_average)
-        print("Got " + str(len(starts_and_ends)) + "starts and ends")
-        print(starts_and_ends)
+        #print("Got " + str(len(two_average)) + " two_average qrs's")
+        #print(two_average)
+        #print("Got " + str(len(starts_and_ends)) + "starts and ends")
+        #print(starts_and_ends)
         leadId = list(jsondata["leads"].keys())[index]
         jsondata["readings"][leadId] = readings_denoised
-        jsondata["qrs"][leadId] = two_average
+        jsondata_qrs[leadId] = two_average
         jsondata["qrsStartsAndEnds"][leadId] = starts_and_ends
         index+=1
+
+
+    # Find meanQrs
+    byIndex : list[list[int]] = []
+    for qrses in jsondata_qrs.values():
+        difference = len(qrses) - len(byIndex)
+        if difference > 0:
+            for i in range(difference):
+                byIndex.append([])
+        for qrsI, qrs in enumerate(qrses):
+            if byIndex[qrsI] is None: byIndex.append([])
+            byIndex[qrsI].append(qrs)
+    print(byIndex)
+    meanQrs = []
+    for i, qrses in enumerate(byIndex):
+        meanQrs.insert(i, int(statistics.mean(qrses)))
+
+    jsondata["meanQrs"] = meanQrs
+    jsondata["qrs"] = jsondata_qrs
 
     with open("./" + sampleId + ".json", "w") as f:
         json.dump(jsondata, f)
 
-print("Starting")
+#print("Starting")
 parser = argparse.ArgumentParser(
                     prog='ECG transformer',
                     description='Transform ECGs for visualization',

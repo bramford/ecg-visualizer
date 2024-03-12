@@ -13,6 +13,7 @@ export interface EcgLead {
   unknown7: string;
   id: string;
 }
+
 export interface Ecg {
   readings: {
     [leadId: string]: number[];
@@ -33,6 +34,7 @@ export interface Ecg {
   age: number;
   sex: string;
   diagnoses: string[];
+  meanQrs: number[];
 }
 
 export interface EcgMetadata {

@@ -10,9 +10,7 @@ export default async function Ecgs(props?: {page?: number}) {
   async function getEcgs() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
     const query = `${uri}/ecgs?count=${count}&offset=${offset}`;
-    console.debug(`Fetching ${query}`);
     const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
-    console.debug(`Got response with ${ecgs.length} ecgs`);
     return ecgs;
   }
 

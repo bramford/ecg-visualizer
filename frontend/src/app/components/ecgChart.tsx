@@ -1,7 +1,8 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Dot, ReferenceDot, ReferenceLine, ReferenceArea } from 'recharts';
 import { Ecg } from '../lib/types';
+import { randomUUID } from 'crypto';
 
 function resolveLeadColor(leadId: string) {
   switch (leadId) {
@@ -34,36 +35,35 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
     return r;
   });
 
+  const referenceLines = Object.entries(props.ecg.qrs).map(([leadId, qrss]) => {
+        // <Dot r={5} key={"qrs" + leadId + "-" + qrs.toString()} cy={props.ecg.readings[leadId][qrs]} cx={qrs} stroke="black" fill={leadColor} strokeWidth={0.7} />
+        // const leadColor = resolveLeadColor(leadId);
+        return qrss.map((qrs) => {
+          console.debug(`Rendering dot for QRS ${leadId}-${qrs} at x:${qrs},y:${props.ecg.readings[leadId][qrs]}`)
+          return (
+            <>
+              <ReferenceLine key={`${leadId}-${qrs}`} label="QRS" x={qrs} stroke='gold' strokeWidth={1} height="100%" width={1}/>
+            </>
+          )
+        })
+      }).flat();
+
   return (
 	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={600}>
 		<LineChart data={readingsFixed}>
 			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1"/>
-			<XAxis dataKey="timeMs" hide={true}/>
-			<YAxis hide={true}/>
-			<Tooltip content={({ active, payload, label}) => {
-        if (active && payload && payload.length > 0) {
-          return (
-              <div className='bg-gray-100 px-2 py-1 opacity-80 text-sm text-gray-900'>
-                <p>{label}</p>
-                {payload.map((p) => {
-                  return (
-                    <>
-                    <div className={'flex items-center justify-between' + 'text-[' + p.color + ']'}>
-                    <p className={'mr-1' + 'text-[#' + p.color + ']'}>{p.dataKey}: </p>
-                    <p>{p.value}</p>
-                    </div>
-                    </>
-                  )
-                })}
-              </div>
-            )
-        }
-      }}/>
+			<XAxis id='x' hide={false}/>
+			<YAxis id="y" hide={false}/>
+      <ReferenceDot r={1000} cy={0} cx={500} fill='black' stroke="black" strokeWidth={1} />
+      <ReferenceLine x={1000} stroke='black' strokeWidth={1}/>
+      <ReferenceArea x1={500} x2={1000} y1={0} y2={100}/>
+			<Tooltip/>
       {Object.keys(readingsFixed[0]).map((key) => {
         const leadColor = resolveLeadColor(key);
         return (
           <>
-          <Line type="linear" key={key} dataKey={key} stroke={leadColor} strokeWidth={0.7} dot={false} />
+            {referenceLines}
+            <Line type="linear" key={"readingsLine-" + key} dataKey={key} stroke={leadColor} strokeWidth={0.7} dot={false} />
           </>
         )
       })}

@@ -11,11 +11,8 @@ export default async function Ecg({
   async function getEcg() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
     const query = `${uri}/ecgs/${searchParams?.id}`;
-    console.debug(`Fetching ${query}`);
     const response = await fetch(query, { cache: 'no-cache', mode: "no-cors" });
-    console.debug(response.status);
     const body = await response.text();
-    console.debug(`Got body: ${body}`);
     return JSON.parse(body) as Ecg;
   }
 
