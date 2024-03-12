@@ -38,6 +38,7 @@ export interface EcgMetadata {
   leadIds: string[];
   leadNumber: number;
   sampleRate: number;
+  qrsCount: number;
   sampleId: string;
   otherMachineData?: string;
   age: number;

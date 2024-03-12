@@ -1,6 +1,6 @@
 import { EcgsPageButtons } from "./ecgButtons";
 import Link from "next/link";
-import { Ecg } from "../lib/types";
+import { Ecg, EcgMetadata } from "../lib/types";
 
 export default async function Ecgs(props?: {page?: number}) {
 
@@ -10,7 +10,7 @@ export default async function Ecgs(props?: {page?: number}) {
   async function getEcgs() {
     const uri = process.env.NEXT_PUBLIC_REST_API_URL ?? 'http://localhost:3002'
     const query = `${uri}/ecgs?count=${count}&offset=${offset}`;
-    const ecgs : Ecg[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
+    const ecgs : EcgMetadata[] = await (await fetch(query, { cache: 'no-cache', mode: "no-cors" })).json()
     return ecgs;
   }
 
@@ -24,24 +24,24 @@ export default async function Ecgs(props?: {page?: number}) {
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
         {ecgs.map((ecg) => (
           <Link key={ecg.sampleId} href={`/ecg?id=${ecg.sampleId}`} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-between items-center">
-            <div className="ml-2 p-1 flex flex-row justify-between items-center">
-              <p className="text-m text-red-600 opacity-80">
+            <div className="ml-4 my-1 flex flex-row justify-start">
+              <p className="mr-2 w-20 text-lg text-red-600 opacity-80">
                 {ecg.sampleId}
               </p>
-              <p className="flex flex-col ml-2 text-sm text-gray-700 min-w-16">
+              <p className="ml-2 w-20 text-base text-gray-700">
                 {ecg.age} {ecg.sex}
               </p>
-              <p className="mx-3 text-xl text-gray-700 text-opacity-70">
-              |
+            </div>
+            <div className="text-sm ml-4 mr-1 text-gray-700 flex flex-row justify-between">
+              <p className="mx-2">
+                leads: {ecg.leadNumber}
               </p>
-              <div className="text-xs mt-1 mr-0.5 text-gray-700">
-                <p>
-                  leads: {ecg.leadNumber}
-                </p>
-                <p >
-                  rate: {ecg.sampleRate}hz
-                </p>
-              </div>
+              <p className="mx-2">
+                rate: {ecg.sampleRate}hz
+              </p>
+              <p className="mx-2">
+                QRSs: {ecg.qrsCount}
+              </p>
             </div>
           </Link>
         ))}

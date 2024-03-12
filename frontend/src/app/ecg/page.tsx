@@ -24,27 +24,30 @@ export default async function Ecg({
       <Header/>
       <div className="flex flex-col mx-2 flex-1 overflow-auto">
         <div className="flex flex-col justify-top flex-auto flex-shrink-0">
-          <div key={ecg.sampleId} className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center">
-            <div className="ml-2 mr-2 p-1 flex flex-col justify-top">
-              <p className="text-m text-red-600 opacity-80">
+          <div className="my-4 ml-4 flex flex-row justify-start items-center">
+              <p className="text-xl text-red-600 opacity-80">
                 {ecg.sampleId}
               </p>
-              <div className="flex flex-col justify-top text-sm text-gray-700">
+              <p className="ml-4 text-base text-gray-700">
+                {ecg.age} {ecg.sex}
+              </p>
+            <div className="text-sm ml-4 mr-1 text-gray-700 flex flex-row justify-start items-start">
+              <div className="ml-4 flex flex-col justify-start items-start">
                 <p>
-                  {ecg.age} {ecg.sex}
+                  leads: {ecg.leadNumber}
                 </p>
                 <p>
+                  rate: {ecg.sampleRate}hz
+                </p>
+              </div>
+              <div className="ml-4 flex flex-col justify-start items-start">
+                <p>
+                  QRSs: {ecg.meanQrs.length}
                 </p>
               </div>
             </div>
-            <div className="text-xs ml-2 mt-1 mr-0.5 text-gray-700 flex flex-col items-end">
-              <p>
-                {ecg.leadNumber}l
-              </p>
-              <p >
-                {ecg.sampleRate}hz
-              </p>
-            </div>
+          </div>
+          <div className="m-1 p-1 hover:bg-gray-100 hover:shadow-lg rounded-md shadow flex flex-row justify-center">
             <div className="overflow-x-scroll">
               <EcgChart ecg={ecg} startMs={0} intervalMs={1000 / ecg.sampleRate}/>
             </div>

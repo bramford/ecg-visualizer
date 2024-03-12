@@ -86,7 +86,11 @@ export class EcgsService {
     if (foundFile == undefined) return undefined;
     const jsonString = await fs.readFile(foundFile, { encoding: 'utf8' });
     const res = JSON.parse(jsonString) as Ecg;
-    return res;
+    const sampleId = path.basename(foundFile, '.json');
+    return {
+      ...res,
+      sampleId,
+    };
   }
 
   async findMany(query: GetEcgsQuery) {
@@ -96,6 +100,7 @@ export class EcgsService {
     return await Promise.all(
       this.ecgDataFiles.slice(offset, offset + count).map(async (file) => {
         const sampleId = path.basename(file, '.json');
+        console.debug(`sampleId: ${sampleId}`);
         const jsonString = await fs.readFile(file, { encoding: 'utf8' });
         const ecg = JSON.parse(jsonString) as Ecg;
         const metadata: EcgMetadata = {

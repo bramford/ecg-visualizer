@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -101,9 +102,9 @@ export function Header() {
               priority
             />
           </a>
-          <p className="text-xl font-sans m-2 flex flex-col justify-center text-gray-800">
+          <Link href="/" className="text-xl font-sans m-2 flex flex-col justify-center text-gray-800">
             ECG Arrhythmia Visualizer
-          </p>
+          </Link>
         </div>
         <div className="flex flex-col justify-center text-right my-2 mr-4">
           <a

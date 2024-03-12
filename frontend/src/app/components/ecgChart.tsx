@@ -37,7 +37,7 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
   const qrsLines = props.ecg.meanQrs.map((qrs) => {
     return (
       <>
-        <ReferenceLine key={`meanQrs-${qrs}`} x={qrs} stroke='gold' strokeWidth={1} strokeDasharray="6 3" strokeOpacity="30%" height="100%" width={1}/>
+        <ReferenceLine key={`meanQrs-${qrs}`} x={qrs} stroke='purple' strokeWidth={1} strokeDasharray="6 3" strokeOpacity="10%" height="100%" width={1}/>
       </>
     )
   });
@@ -53,7 +53,7 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
   });
 
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={300}>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={500}>
 		<ComposedChart data={readingsFixed}>
 			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1" strokeOpacity="40%"/>
 			<XAxis hide={true}/>
