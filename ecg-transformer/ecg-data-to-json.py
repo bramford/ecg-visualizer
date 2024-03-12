@@ -96,21 +96,21 @@ def NLM_1dDarbon(signal,Nvar,P,PatchHW):
 #    for algI, (algKey, algQs) in enumerate(qrs.items()):
 #        for i, q in enumerate(algQs):
 
-def qrs_starts_and_ends(qrs: list[int], max: int):
+def qrs_starts_and_ends(qrs: list[int], max: int, size: int):
     starts_and_ends: list[tuple[int, int]] = []
     for i, v in enumerate(qrs):
         start = 0
         end = 0
         if i == 0:
-            start = v - (v / 3)
+            start = v - (v / size)
             if start <= 0: start = 0
         else:
-            start = v - ((v - qrs[i-1]) / 3)
+            start = v - ((v - qrs[i-1]) / size)
 
         if i+1 < len(qrs):
-            end = v + ((qrs[i+1] - v) / 3)
+            end = v + ((qrs[i+1] - v) / size)
         else:
-            end = v + ((max - v) / 3)
+            end = v + ((max - v) / size)
         starts_and_ends.append((int(start), int(end)))
     return starts_and_ends
 
@@ -123,7 +123,7 @@ def convert_sample_to_json(samplePath: str):
     jsondata["leads"] = dict()
     jsondata["qrs"] = dict()
     jsondata_qrs : dict[str, list[int]] = dict()
-    jsondata["qrsStartsAndEnds"] = dict()
+    jsondata_qrsStartsAndEnds: dict[str, list[tuple[int,int]]] = dict()
 
     with open(os.path.join(parentDir,sampleId) + ".hea", "r", encoding="UTF-8") as file:
         lines = [line.rstrip() for line in file]
@@ -188,7 +188,7 @@ def convert_sample_to_json(samplePath: str):
         #print(christov)
         two_average_np = detectors.two_average_detector(readings_denoised);
         two_average = list(map(lambda n: int(n), two_average_np))
-        starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1))
+        starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1), 5)
         #print("Got " + str(len(two_average)) + " two_average qrs's")
         #print(two_average)
         #print("Got " + str(len(starts_and_ends)) + "starts and ends")
@@ -196,9 +196,10 @@ def convert_sample_to_json(samplePath: str):
         leadId = list(jsondata["leads"].keys())[index]
         jsondata["readings"][leadId] = readings_denoised
         jsondata_qrs[leadId] = two_average
-        jsondata["qrsStartsAndEnds"][leadId] = starts_and_ends
+        jsondata_qrsStartsAndEnds[leadId] = starts_and_ends
         index+=1
 
+    jsondata["qrs"] = jsondata_qrs
 
     # Find meanQrs
     byIndex : list[list[int]] = []
@@ -214,9 +215,25 @@ def convert_sample_to_json(samplePath: str):
     meanQrs = []
     for i, qrses in enumerate(byIndex):
         meanQrs.insert(i, int(statistics.mean(qrses)))
-
     jsondata["meanQrs"] = meanQrs
-    jsondata["qrs"] = jsondata_qrs
+
+    # Find meanQrsStartAndEnd
+    startAndEndByIndex : list[list[tuple[int,int]]] = []
+    for qrses in jsondata_qrsStartsAndEnds.values():
+        difference = len(qrses) - len(startAndEndByIndex)
+        if difference > 0:
+            for i in range(difference):
+                startAndEndByIndex.append([])
+        for qrsI, qrs in enumerate(qrses):
+            if startAndEndByIndex[qrsI] is None: startAndEndByIndex.append([])
+            startAndEndByIndex[qrsI].append(qrs)
+    print(startAndEndByIndex)
+    meanQrsStartAndEnd = []
+    for i, qrses in enumerate(startAndEndByIndex):
+        meanStart = int(statistics.mean(list(map(lambda x: x[0], qrses))))
+        meanEnd = int(statistics.mean(list(map(lambda x: x[1], qrses))))
+        meanQrsStartAndEnd.insert(i, (meanStart, meanEnd))
+    jsondata["meanQrsStartAndEnd"] = meanQrsStartAndEnd
 
     with open("./" + sampleId + ".json", "w") as f:
         json.dump(jsondata, f)

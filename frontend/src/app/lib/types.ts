@@ -30,6 +30,7 @@ export interface Ecg {
   sex: string;
   diagnoses: string[];
   meanQrs: number[];
+  meanQrsStartAndEnd: [number, number][];
 }
 
 export interface EcgMetadata {
