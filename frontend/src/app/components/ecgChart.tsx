@@ -1,8 +1,7 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Dot, ReferenceDot, ReferenceLine, ReferenceArea } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea, ComposedChart } from 'recharts';
 import { Ecg } from '../lib/types';
-import { randomUUID } from 'crypto';
 
 function resolveLeadColor(leadId: string) {
   switch (leadId) {
@@ -36,33 +35,29 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
   });
 
   const qrsLines = props.ecg.meanQrs.map((qrs) => {
-        // <Dot r={5} key={"qrs" + leadId + "-" + qrs.toString()} cy={props.ecg.readings[leadId][qrs]} cx={qrs} stroke="black" fill={leadColor} strokeWidth={0.7} />
-        // const leadColor = resolveLeadColor(leadId);
-          return (
-            <>
-              <ReferenceLine key={`meanQrs-${qrs}`} label="QRS" x={qrs} stroke='gold' strokeWidth={1} height="100%" width={1}/>
-            </>
-          )
-        });
+    return (
+      <>
+        <ReferenceLine key={`meanQrs-${qrs}`} x={qrs} stroke='gold' strokeWidth={1} strokeDasharray="6 3" strokeOpacity="30%" height="100%" width={1}/>
+      </>
+    )
+  });
 
   const startAndEndQrsLines = props.ecg.meanQrsStartAndEnd.map(([start, end]) => {
-        // <Dot r={5} key={"qrs" + leadId + "-" + qrs.toString()} cy={props.ecg.readings[leadId][qrs]} cx={qrs} stroke="black" fill={leadColor} strokeWidth={0.7} />
-        // const leadColor = resolveLeadColor(leadId);
-          return (
-            <>
-              <ReferenceLine key={`meanQrsStart-${start}`} label="QRS Start" x={start} stroke='blue' strokeWidth={1} height="100%" width={1}/>
-              <ReferenceLine key={`meanQrsEnd-${end}`} label="QRS End" x={end} stroke='purple' strokeWidth={1} height="100%" width={1}/>
-            </>
-          )
-        });
+    return (
+      <>
+        <ReferenceArea key={`meanQrsStartEnd-${start}-${end}`} x1={start} x2={end} fillOpacity="3%" opacity="40%" fill='gray'/>
+        <ReferenceLine key={`meanQrsStart-${start}`} x={start} stroke='gray' strokeWidth={1} strokeOpacity="5%" height="100%"/>
+        <ReferenceLine key={`meanQrsEnd-${end}`} x={end} stroke='gray' strokeWidth={1} strokeOpacity="5%" height="100%"/>
+      </>
+    )
+  });
 
-  // <ReferenceArea x1={500} x2={1000} y1={0} y2={100}/>
   return (
-	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={600}>
-		<LineChart data={readingsFixed}>
-			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1"/>
-			<XAxis id='x' hide={false}/>
-			<YAxis id="y" hide={false}/>
+	 <ResponsiveContainer width="100%" height="100%" minWidth={Object.values(props.ecg.readings)[0].length * 2} minHeight={300}>
+		<ComposedChart data={readingsFixed}>
+			<CartesianGrid stroke='#8f8f8f' strokeDasharray="1 1" strokeOpacity="40%"/>
+			<XAxis hide={true}/>
+			<YAxis hide={false}/>
 			<Tooltip/>
       {Object.keys(readingsFixed[0]).map((key) => {
         const leadColor = resolveLeadColor(key);
@@ -74,7 +69,7 @@ export default function EcgChart(props: { ecg: Ecg, startMs: number, intervalMs:
           </>
         )
       })}
-		</LineChart>
+		</ComposedChart>
 	</ResponsiveContainer>
   )
 }

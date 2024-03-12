@@ -42,6 +42,7 @@ export interface EcgMetadata {
   readingsCountPerLead: number;
   leadIds: string[];
   leadNumber: number;
+  qrsCount: number;
   sampleRate: number;
   sampleId: string;
   otherMachineData?: string;
@@ -104,6 +105,7 @@ export class EcgsService {
           age: ecg.age,
           sex: ecg.sex,
           leadNumber: ecg.leadNumber,
+          qrsCount: ecg.meanQrs.length,
           diagnoses: ecg.diagnoses,
           sampleRate: ecg.sampleRate,
           otherMachineData: ecg.otherMachineData,

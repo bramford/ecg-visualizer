@@ -188,7 +188,7 @@ def convert_sample_to_json(samplePath: str):
         #print(christov)
         two_average_np = detectors.two_average_detector(readings_denoised);
         two_average = list(map(lambda n: int(n), two_average_np))
-        starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1), 5)
+        starts_and_ends = qrs_starts_and_ends(two_average, (len(readings_denoised) - 1), 4)
         #print("Got " + str(len(two_average)) + " two_average qrs's")
         #print(two_average)
         #print("Got " + str(len(starts_and_ends)) + "starts and ends")
